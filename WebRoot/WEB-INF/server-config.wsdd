@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="GB2312"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+	xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+	<globalConfiguration>
+		<parameter name="adminPassword" value="jsadm1n" />
+		<parameter name="sendXsiTypes" value="true" />
+		<parameter name="sendMultiRefs" value="true" />
+		<parameter name="sendXMLDeclaration" value="true" />
+		<parameter name="enableNamespacePrefixOptimization" value="true" />
+		<parameter name="sendXMLDeclaration" value="true" />
+		<parameter name="axis.sendMinimizedElements" value="true" />
+		<parameter name="attachments.implementation"
+			value="org.apache.axis.attachments.AttachmentsImpl" />
+		<requestFlow>
+			<handler type="java:org.apache.axis.handlers.JWSHandler">
+				<parameter name="scope" value="session" />
+			</handler>
+			<handler type="java:org.apache.axis.handlers.JWSHandler">
+				<parameter name="scope" value="request" />
+				<parameter name="extension" value=".jwr" />
+			</handler>
+		</requestFlow>
+	</globalConfiguration>
+	<handler name="Authenticate"
+		type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" />
+	<handler name="LocalResponder"
+		type="java:org.apache.axis.transport.local.LocalResponder" />
+	<handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper" />
+	<transport name="http">
+		<requestFlow>
+			<handler type="URLMapper" />
+			<handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler" />
+		</requestFlow>
+		<parameter name="qs:list"
+			value="org.apache.axis.transport.http.QSListHandler" />
+		<parameter name="qs:wsdl"
+			value="org.apache.axis.transport.http.QSWSDLHandler" />
+		<parameter name="qs.list"
+			value="org.apache.axis.transport.http.QSListHandler" />
+		<parameter name="qs.method"
+			value="org.apache.axis.transport.http.QSMethodHandler" />
+		<parameter name="qs:method"
+			value="org.apache.axis.transport.http.QSMethodHandler" />
+		<parameter name="qs.wsdl"
+			value="org.apache.axis.transport.http.QSWSDLHandler" />
+	</transport>
+
+	<transport name="local">
+		<responseFlow>
+			<handler type="LocalResponder" />
+		</responseFlow>
+	</transport>
+	<service name="ServiceSoap" provider="java:RPC" style="wrapped"
+		use="literal">
+		<parameter name="wsdlTargetNamespace" value="http://www.uway.cn/uport/ubp/" />
+		<parameter name="wsdlServiceElement" value="Service" />
+		<parameter name="schemaQualified" value="http://www.uway.cn/uport/ubp/" />
+		<parameter name="wsdlServicePort" value="ServiceSoap" />
+		<parameter name="className"
+			value="cn.uway.uport.wsdl.ubp.ServiceSoap_BindingImpl" />
+		<parameter name="wsdlPortType" value="ServiceSoap" />
+		<parameter name="typeMappingVersion" value="1.2" />
+		<operation name="addMonitTask" qname="operNS:addMonitTask"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" returnQName="retNS:status"
+			xmlns:retNS="http://www.uway.cn/uport/ubp/" returnType="rtns:int"
+			xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://www.uway.cn/uport/ubp/addMonitTask">
+			<parameter qname="pns:xmlStrTask" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:msg" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+		</operation>
+		<operation name="showMonitTaskStatusById" qname="operNS:showMonitTaskStatusById"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" soapAction="http://www.uway.cn/uport/ubp/showMonitTaskStatusById">
+			<parameter qname="pns:monitTaskId" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrResponse" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+			<parameter qname="pns:status" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+		</operation>
+		<operation name="showOwnerMonitTasks" qname="operNS:showOwnerMonitTasks"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" soapAction="http://www.uway.cn/uport/ubp/showOwnerMonitTasks">
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrResponse" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+			<parameter qname="pns:status" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+		</operation>
+		<operation name="deleteMonitTask" qname="operNS:deleteMonitTask"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" returnQName="retNS:status"
+			xmlns:retNS="http://www.uway.cn/uport/ubp/" returnType="rtns:int"
+			xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://www.uway.cn/uport/ubp/deleteMonitTask">
+			<parameter qname="pns:monitTaskId" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+		</operation>
+		<operation name="deleteMonitTaskWithoutAlarmClear" qname="operNS:deleteMonitTaskWithoutAlarmClear"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" returnQName="retNS:status"
+			xmlns:retNS="http://www.uway.cn/uport/ubp/" returnType="rtns:int"
+			xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://www.uway.cn/uport/ubp/deleteMonitTaskWithoutAlarmClear">
+			<parameter qname="pns:monitTaskId" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+		</operation>
+		<operation name="modifyMonitTask" qname="operNS:modifyMonitTask"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" returnQName="retNS:status"
+			xmlns:retNS="http://www.uway.cn/uport/ubp/" returnType="rtns:int"
+			xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://www.uway.cn/uport/ubp/modifyMonitTask">
+			<parameter qname="pns:monitTaskId" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrNewTask" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:msg" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+		</operation>
+		<operation name="setMonitorTaskStatus" qname="operNS:setMonitorTaskStatus"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" returnQName="retNS:status"
+			xmlns:retNS="http://www.uway.cn/uport/ubp/" returnType="rtns:int"
+			xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://www.uway.cn/uport/ubp/setMonitorTaskStatus">
+			<parameter qname="pns:monitTaskId" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:oper" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+		</operation>
+		<operation name="existsMonitTask" qname="operNS:existsMonitTask"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" returnQName="retNS:status"
+			xmlns:retNS="http://www.uway.cn/uport/ubp/" returnType="rtns:int"
+			xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://www.uway.cn/uport/ubp/existsMonitTask">
+			<parameter qname="pns:monitTaskId" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:result" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+			<parameter qname="pns:msg" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+		</operation>
+		<operation name="showMonitorTask" qname="operNS:showMonitorTask"
+			xmlns:operNS="http://www.uway.cn/uport/ubp/" soapAction="http://www.uway.cn/uport/ubp/showMonitorTask">
+			<parameter qname="pns:monitorTaskId" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrSecure" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" />
+			<parameter qname="pns:xmlStrResponse" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+			<parameter qname="pns:status" xmlns:pns="http://www.uway.cn/uport/ubp/"
+				type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT" />
+		</operation>
+		<parameter name="allowedMethods" value="*" />
+	</service>
+
+</deployment>

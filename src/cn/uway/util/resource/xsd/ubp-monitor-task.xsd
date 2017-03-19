@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://www.w3school.com.cn"
+xmlns="http://www.w3school.com.cn"
+elementFormDefault="qualified">
+	<!--约定：表名、视图名、字段名、别名等均严格区分大小写
+	-->
+
+	<!--公共的可复用类型-->
+	<xs:simpleType name="unitType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="_1MINUTE" />
+			<xs:enumeration value="_5MINUTE" />
+			<xs:enumeration value="_10MINUTE" />
+			<xs:enumeration value="_15MINUTE" />
+			<xs:enumeration value="_30MINUTE" />
+			<xs:enumeration value="HOUR" />
+			<xs:enumeration value="DAY" />
+			<xs:enumeration value="WEEK" />
+			<xs:enumeration value="MONTH" />
+			<xs:enumeration value="SEASON" />
+			<xs:enumeration value="YEAR" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="orderType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ASC" />
+			<xs:enumeration value="DESC" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:element name="monit-task">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="caller" type="xs:integer" minOccurs="1" maxOccurs="1" />
+				<xs:element name="t-id" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:element name="key-index-type" type="xs:decimal" minOccurs="0" maxOccurs="1" />
+				<xs:element name="first-monitor-time" type="xs:dateTime" minOccurs="1" maxOccurs="1" />
+				<xs:element name="last-monitor-time" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
+				<xs:element name="city" type="xs:nonNegativeInteger" minOccurs="1" maxOccurs="1" />
+				<xs:element name="memo" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="c0" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c1" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c2" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c3" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c4" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c5" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c6" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c7" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c8" type="xs:string" minOccurs="0" maxOccurs="1" />
+							<xs:element name="c9" type="xs:string" minOccurs="0" maxOccurs="1" />
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="monitor-period-time" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:attribute name="unit" type="unitType" use="required" />
+						<xs:attribute name="number" type="xs:positiveInteger" use="required" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="primary-indicator" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="name" minOccurs="1" maxOccurs="1">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="expr-description" minOccurs="1" maxOccurs="1">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="datasource" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:choice>
+							<xs:element name="database" maxOccurs="1">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="data-delay" type="xs:positiveInteger" minOccurs="1" maxOccurs="1" />
+										<xs:element name="time-field" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:attribute name="name" use="required">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="0" />
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="type" use="required">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="0" />
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="table" use="required">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:minLength value="1" />
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="table-relation" type="xs:string" minOccurs="0" maxOccurs="1" />
+										<xs:element name="tables" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="table" minOccurs="1" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="sql" minOccurs="0" maxOccurs="1">
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="15" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="field" minOccurs="1" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="name" use="required">
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:minLength value="1" />
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:attribute>
+																		<xs:attribute name="is-index" type="xs:boolean" default="false" />
+																		<xs:attribute name="is-export" type="xs:boolean" default="false" />
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="name" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1" />
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="connection-id" type="xs:integer" use="required" />
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="file" maxOccurs="1">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="relation" type="xs:string" minOccurs="0" maxOccurs="1" />
+										<xs:element name="data-files" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="data-file" minOccurs="1" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="field" minOccurs="1" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="name" use="required">
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:minLength value="1" />
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:attribute>
+																		<xs:attribute name="is-index" type="xs:boolean" default="false" />
+																		<xs:attribute name="is-export" type="xs:boolean" default="false" />
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="name" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1" />
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+						<xs:attribute name="gran" type="unitType" use="required" />
+						<xs:attribute name="level" use="required">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:minLength value="1" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="net-type" use="required">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:minLength value="1" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="is-log-drive" type="xs:boolean" default="false" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="jobs" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="job" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="monitor-period-time" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:attribute name="unit" type="unitType" use="required" />
+												<xs:attribute name="number" type="xs:positiveInteger" use="required" />
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="monitor-field" minOccurs="1" maxOccurs="1">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="first-monitor-time" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
+										<xs:element name="last-monitor-time" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
+										<xs:element name="filter" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="include" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="field" use="required">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:minLength value="1" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="field" use="required">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:minLength value="1" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="includeSQL" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="field" use="required">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:minLength value="1" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="connection-id" type="xs:integer" use="required" />
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="excludeSQL" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="field" use="required">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:minLength value="1" />
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="connection-id" type="xs:integer" use="required" />
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="busy-hour" minOccurs="0" maxOccurs="1">
+														<xs:complexType>
+															<xs:attribute name="field" type="xs:string" />
+															<xs:attribute name="value" type="xs:positiveInteger" />
+															<xs:attribute name="level" type="xs:positiveInteger" />
+															<xs:attribute name="type" type="xs:positiveInteger" />
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="holiday" minOccurs="0" maxOccurs="1">
+														<xs:complexType>
+															<xs:attribute name="policy" type="xs:nonNegativeInteger" use="required" />
+															<xs:attribute name="strategy" type="xs:nonNegativeInteger" use="required" />
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="expressions" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="data-range" minOccurs="1" maxOccurs="1">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="range" minOccurs="1" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="offset" minOccurs="1" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:attribute name="from" type="xs:nonNegativeInteger" use="required" />
+																					<xs:attribute name="to" type="xs:nonNegativeInteger" use="required" />
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																		<xs:attribute name="alias" type="xs:string" use="required" />
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="indicator" minOccurs="1" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="alarm-level" type="xs:short" use="required" />
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="rule" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1" />
+													<xs:element name="period-info" minOccurs="1" maxOccurs="1">
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="analysis-period" minOccurs="1" maxOccurs="1">
+																	<xs:complexType>
+																		<xs:attribute name="unit" type="unitType" use="required" />
+																		<xs:attribute name="period-num" type="xs:positiveInteger" use="required" />
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="monitor-period" minOccurs="1" maxOccurs="1">
+																	<xs:complexType>
+																		<xs:all>
+																			<xs:element name="assign-time" minOccurs="0" maxOccurs="1">
+																				<xs:complexType>
+																					<xs:attribute name="unit" type="unitType" use="required" />
+																					<xs:attribute name="value" use="required">
+																						<xs:simpleType>
+																							<xs:restriction base="xs:string">
+																								<xs:minLength value="1" />
+																							</xs:restriction>
+																						</xs:simpleType>
+																					</xs:attribute>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:all>
+																		<xs:attribute name="unit" type="unitType" use="required" />
+																		<xs:attribute name="period-num" type="xs:positiveInteger" use="required" />
+																		<xs:attribute name="need-whole" type="xs:nonNegativeInteger" />
+																		<xs:attribute name="assign-monitor-time">
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:minLength value="1" />
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:attribute>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="occur-times" minOccurs="0" maxOccurs="1">
+																	<xs:complexType>
+																		<xs:all>
+																			<xs:element name="monitor-occur-times" minOccurs="0" maxOccurs="1">
+																				<xs:complexType>
+																					<xs:attribute name="unit" type="unitType" use="required" />
+																					<xs:attribute name="value" type="xs:positiveInteger" use="required" />
+																					<xs:attribute name="continues" type="xs:boolean" use="required" />
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:all>
+																		<xs:attribute name="unit" type="unitType" use="required" />
+																		<xs:attribute name="value" type="xs:positiveInteger" use="required" />
+																		<xs:attribute name="continues" type="xs:boolean" use="required" />
+																	</xs:complexType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="top-info" minOccurs="0" maxOccurs="1">
+														<xs:complexType>
+															<xs:all>
+																<!--TODO:暂时仅支持一个排序指标-->
+																<xs:element name="order-indicator" minOccurs="1" maxOccurs="1">
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="xs:string">
+																				<xs:attribute name="sort-way" type="orderType" use="required" />
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<!--TODO:暂时不支持表达式排序
+																<xs:element name="order-expression" type="xs:string" minOccurs="1">
+																	<xs:complexType>
+																		<xs:attribute name="sort-way" type="orderType" use="required" />
+																	</xs:complexType>
+																</xs:element>
+																-->
+															</xs:all>
+															<xs:attribute name="number" type="xs:positiveInteger" use="required" />
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="alarm-level" minOccurs="0" maxOccurs="1">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="alarm" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="level" type="xs:short" use="required" />
+																		<xs:attribute name="occur_times" type="xs:string" use="required" />
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="default" type="xs:short" use="required" />
+														</xs:complexType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+									<xs:attribute name="alarm-clear" type="xs:boolean" default="false"  />
+									<xs:attribute name="reject" type="xs:boolean" default="false"  />
+									<xs:attribute name="enable" type="xs:boolean" default="true"  />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+			
+			<xs:attribute name="id" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="enable" type="xs:boolean" default="true" />
+			
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

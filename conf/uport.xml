@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uport>
+	<!-- web端口 -->
+	<http-port>8080</http-port>
+	<!-- 修改任务时，是否校准任务运行时间（校准即取任务在库中的时间与当前修改任务时间比较，取较大的）。校准为true，否则false -->
+	<calibration-curr-monitor-time>false</calibration-curr-monitor-time>
+	<!-- UBP任务表数据库配置 -->
+	<task-database>
+		<!-- 数据库URL -->
+		<!-- <url>jdbc:oracle:thin:@192.168.15.249:1521:test10</url> -->
+		<url>jdbc:oracle:thin:@192.168.15.223:1521:test10</url>
+		<!-- 数据库用户名 -->
+		<username>test_cnoap</username>
+		<!-- 数据库密码 -->
+		<password>test_cnoapuway123</password>
+		<!-- 最多使用数据库连接数 -->
+		<max-active>10</max-active>
+		<!-- 最大空闲连接数 -->
+		<max-idle>1</max-idle>
+	</task-database>
+	<!-- 安全校验信息,主要校验是否合法的程序调用 -->
+	<security>
+		<!-- 是否打开安全校验功能，默认是true -->
+		<enable>true</enable>
+		<!-- UBP在UWAY_PROGRAM_DEFINE表中定义的ID -->
+		<program-id>0</program-id>
+		<!-- UWAY_PROGRAM_DEFINE表刷新周期 -->
+		<program-define-refresh-period>1440</program-define-refresh-period>
+		<!-- UWAY_INTERFACE_SECURITY表刷新周期 -->
+		<security-info-refresh-period>1440</security-info-refresh-period>
+		<!-- 程序定义和安全信息加载数据库 如不enable为false,则默认使用任务表所在数据库,即task-database -->
+		<load-database>
+			<!-- 是否开启 在任务表和程序定义表在不同数据库时需要配置为true,默认false -->
+			<enable>true</enable>
+			<database>
+				<!-- 数据库URL -->
+				<url>jdbc:oracle:thin:@192.168.15.223:1521:test10</url>
+				<!-- 数据库用户名 -->
+				<username>test_cnoap</username>
+				<!-- 数据库密码 -->
+				<password>test_cnoapuway123</password>
+				<!-- 最多使用数据库连接数 -->
+				<max-active>10</max-active>
+				<!-- 最大空闲连接数 -->
+				<max-idle>1</max-idle>
+			</database>
+		</load-database>
+	</security>
+	<!-- 节假日校验功能配置 -->
+	<holiday>
+		<!-- 是否开启节假日配置 -->
+		<enable>true</enable>
+		<!-- 节假日配置定时刷新频率 单位：分钟，默认每天刷新一次 -->
+		<refresh-period>1440</refresh-period>
+		<load-database>
+			<!-- 是否开启 在任务表和节假日表在不同数据库时需要配置为true,默认false -->
+			<enable>true</enable>
+			<database>
+				<!-- 数据库URL -->
+				<url>jdbc:oracle:thin:@192.168.15.223:1521:test10</url>
+				<!-- 数据库用户名 -->
+				<username>test_cnoap</username>
+				<!-- 数据库密码 -->
+				<password>test_cnoapuway123</password>
+				<!-- 最多使用数据库连接数 -->
+				<max-active>10</max-active>
+				<!-- 最大空闲连接数 -->
+				<max-idle>1</max-idle>
+			</database>
+		</load-database>
+	</holiday>
+	<!-- 接口访问控制，目前配置每个IP每control-unit-seconds秒最多可访问access-count次接口，及IP白名单。 -->
+	<access-control>
+		<!-- 访问频率控制开关 true表示打开，false表示关闭，默认true-->
+		<enable>true</enable>
+		<!-- 控制单位是多少秒  -->
+		<control-unit-seconds>10</control-unit-seconds>
+		<!-- 一个控制单位可访问多少次 -->
+		<access-count>100</access-count>
+		<!-- 如果某个IP已达到最大访问次数，要求它休息多少秒后才允许再次尝试访问 -->
+		<forbidden-time>10</forbidden-time>
+		<!-- 允许的IP，以英文逗号分隔。*为允许所有IP -->
+		<allow-ip-list>*</allow-ip-list>
+	</access-control>
+</uport>

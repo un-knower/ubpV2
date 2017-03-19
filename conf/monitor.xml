@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monitor>
+	<!-- 任务功能配置 -->
+	<task>
+		<!-- 是否启用任务加载运算调试模式 默认禁用(false)，启用会显著影响程序运行性能 -->
+		<enable-debug>true</enable-debug>
+		<!-- 任务表扫描周期，单位：分钟 -->
+		<load-period>1</load-period>
+		<!-- 任务队列最大容量 -->
+		<queue-capacity>100</queue-capacity>
+		<!-- 任务加载线程最大并发数 -->
+		<max-threads>10</max-threads>
+		<!-- 任务表加载数据库 -->
+		<task-database>
+			<!-- 数据库URL -->
+			<url>jdbc:oracle:thin:@192.168.15.223:1521:ora11</url>
+			<!-- 数据库用户名 -->
+			<username>igp</username>
+			<!-- 数据库密码 -->
+			<password>uwaysoft2009</password>
+			<!-- 最多使用数据库连接数 -->
+			<max-active>10</max-active>
+			<!-- 最大空闲连接数 -->
+			<max-idle>2</max-idle>
+		</task-database>
+	</task>
+	<!-- 数据源加载功能配置 -->
+	<datasource>
+		<!-- 是否启用数据源加载调试模式 默认禁用(false)，启用会显著影响程序运行性能 -->
+		<enable-debug>true</enable-debug>
+		<datasource-loader>
+			<!-- 数据源加载频率 单位：分钟 -->
+			<period>10</period>
+			<!-- 数据源加载线程最大并发数 -->
+			<max-threads>10</max-threads>
+			<!-- 队列最大容量 -->
+			<queue-capacity>100</queue-capacity>
+			<!-- 单次加载最长加载时间,单位：分钟 ，默认48 -->
+			<max-load-time>48</max-load-time>
+			<!-- 单次加载数据容错比例，即本次加载不能比上次加载的数据条数相差的百分比，负数即为不启用本功能；数值更大，容错比例越大，可大于100 -->
+			<fault-tolerance-percent>10</fault-tolerance-percent>
+			<!-- 数据源容错检验小时数，如果配置<fault-tolerance-percent>不启用（配置为负数），则本功能无效 -->
+			<fault-tolerance-percent-check-hours>8
+			</fault-tolerance-percent-check-hours>
+			<!-- csv数据文件根目录 -->
+			<file-root-dir>../data-files/</file-root-dir>
+			<!-- 非日志驱动类数据源无数据时加载的最大超时时间，单位：分钟。超时后跳过该时间点，负数即为不启用超时时间（永不超时） -->
+			<load-timeout>120</load-timeout>
+			<!-- 数据文件字符集，可选配置，默认为UTF-8 -->
+			<file-charset>gbk</file-charset>
+		</datasource-loader>
+		<!-- 加载数据源的清理策略 -->
+		<datasource-depot>
+			<!-- 数据源回收周期 单位分钟 -->
+			<period>60</period>
+			<!-- 数据滑动窗口(数据粒度) 单位：小时 -->
+			<slide-hours>720</slide-hours>
+			<!-- 数据文件存储时间(数据文件生成时间) 单位：小时 -->
+			<live-hours>168</live-hours>
+		</datasource-depot>
+	</datasource>
+
+	<!-- 告警输出配置 -->
+	<alarm-export>
+		<!-- Alarm_Text字段输出字符集，可选配置，默认为UTF-8 -->
+		<charset>utf-8</charset>
+		<!-- 是否与任务表在同一个数据库 1、如在同一个数据库，则以任务表数据库为准，该处数据库配置不生效 2、如不在同一个数据库，则该处数据库配置生效 -->
+		<enable-extra-database>true</enable-extra-database>
+		<!--告警详表入库 联通不需要(false) 节省性能 -->
+		<enable-alarm-detail>true</enable-alarm-detail>
+		<!-- 告警输出数据库配置 -->
+		<database>
+			<!-- 数据库URL -->
+			<url>jdbc:oracle:thin:@192.168.15.223:1521:ora11</url>
+			<!-- 数据库用户名 -->
+			<username>igp</username>
+			<!-- 数据库密码 -->
+			<password>uwaysoft2009</password>
+			<!-- 最多使用数据库连接数 -->
+			<max-active>10</max-active>
+			<!-- 最大空闲连接数 -->
+			<max-idle>1</max-idle>
+		</database>
+	</alarm-export>
+
+	<!-- 内存控制配置 -->
+	<memory-controll>
+		<!-- 内存使用门限，在达到该门限时，数据源加载和监控不能加入新的线程，在当前运行线程运行完后才能提交新的线程 -->
+		<max-percent>80</max-percent>
+		<!-- 内存清理频率，单位：秒，默认1分钟 -->
+		<gc-period>60</gc-period>
+	</memory-controll>
+
+	<!-- 忙时校验功能配置 -->
+	<busy-hour>
+		<!-- 是否开启忙时功能 -->
+		<enable>false</enable>
+		<!-- 忙时配置定时刷新频率 单位：分钟，默认每天刷新一次 -->
+		<refresh-period>1440</refresh-period>
+		<!-- 忙时信息缓存天数 默认保留30天 -->
+		<cache-days>300</cache-days>
+		<load-database>
+			<!-- 是否开启 在任务表和忙时表在不同数据库时需要配置为true,默认false -->
+			<enable>false</enable>
+			<database>
+				<!-- 数据库URL -->
+				<url>jdbc:oracle:thin:@192.168.15.223:1521:ora11</url>
+				<!-- 数据库用户名 -->
+				<username>igp</username>
+				<!-- 数据库密码 -->
+				<password>uwaysoft2009</password>
+				<!-- 最多使用数据库连接数 -->
+				<max-active>10</max-active>
+				<!-- 最大空闲连接数 -->
+				<max-idle>1</max-idle>
+			</database>
+		</load-database>
+	</busy-hour>
+	<!-- 节假日校验功能配置 -->
+	<holiday>
+		<!-- 是否开启节假日配置 -->
+		<enable>false</enable>
+		<!-- 节假日配置定时刷新频率 单位：分钟，默认每天刷新一次 -->
+		<refresh-period>1440</refresh-period>
+		<load-database>
+			<!-- 是否开启 在任务表和节假日表在不同数据库时需要配置为true,默认false -->
+			<enable>false</enable>
+			<database>
+				<!-- 数据库URL -->
+				<url>jdbc:oracle:thin:@192.168.15.223:1521:ora11</url>
+				<!-- 数据库用户名 -->
+				<username>igp</username>
+				<!-- 数据库密码 -->
+				<password>uwaysoft2009</password>
+				<!-- 最多使用数据库连接数 -->
+				<max-active>10</max-active>
+				<!-- 最大空闲连接数 -->
+				<max-idle>1</max-idle>
+			</database>
+		</load-database>
+	</holiday>
+</monitor>

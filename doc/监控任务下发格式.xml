@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+约定:表名/视图名/别名/字段名严格区分大小写
+-->
+<!--根节点
+id:监控任务Id,必填属性,取值可以是符合XML节点属性值规范的任务字符,长度于小于128;由调用端生成,该Id也用于查询任务等操作标识
+name:监控任务名称,必填属性,取值可以是符合XML节点属性值规范的任务字符,长度于小于128;由调用端生成
+enable:是否启用监控任务，可选属性，默认为启用(true)，job节点可覆盖本节点值
+-->
+<monit-task id="13" name="测试用的监控任务" enable="true">
+	<!--调用者Id,本节点值来源于uway_program_define表的program_id字段值,必填节点,取值必须是整型
+	uway_program_define表记录了公司所有程序的定义信息,由公司统一规范填写
+	program_id:程序的标识
+	program_name:程序的名称
+	program_version:程序的版本
+	-->
+	<caller>11111</caller>
+	<!--对象标识类型
+	本节点可选,应用端专用(电信)
+	-->
+	<t-id></t-id>
+	<!--对象标识类型
+	本节点可选,应用端专用(电信)
+	-->
+	<key-index-type></key-index-type>
+	<!--监控任务第一次运行时间,JOB中存在则覆盖本节点
+	必填节点,取值必须是日期类型的字符串形式,且为整点,格式样例:yyyy-MM-ddTHH:mm:ss
+	-->
+	<first-monitor-time>2013-06-15T09:00:00</first-monitor-time>
+	<!--最后一次监控的时间,JOB中存在则覆盖本节点
+	可选节点,取值必须是日期类型的字符串形式,且为整点,必须晚于<first-monitor-time>节点值
+	格式化样例:yyyy-MM-ddTHH:mm:ss
+	-->
+	<last-monitor-time>2013-06-16T18:00:00</last-monitor-time>
+	<!--默认的监控频率,必填节点.闭环JOB中存在则覆盖本节点
+	unit 必填属性,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+	number :必填属性,取值:整型,大于0
+	-->
+	<monitor-period-time unit="WEEK" number="1"/>
+	<!--监控任务备注信息，从c0到c9
+	将静态值对应告警表c0到c9字段。注：导出字段(is-export=true)优先
+	-->
+	<memo>
+		<c0>**</c0>
+		...
+		<c9>**</c9>
+	</memo>
+	<!--主指标配置
+	可选节点
+	-->
+	<primary-indicator>
+		<!--主指标名称
+		必填节点,取值:任意字符
+		-->
+		<name>TCH掉话次数(含切)</name>
+		<!--主指标描述
+		必填节点,取值:任意字符
+		-->
+		<expr-description><![CDATA[TCH掉话次数(含切)>= 5]]></expr-description>
+	</primary-indicator>
+	<!--监控的数据地市
+	必填节点,取值为整型(大于等于0),填监控的数据地市代码,填写0表示全省
+	-->
+	<city>0</city>
+	<!--指标数据源信息,即告知UBP，这些指标从哪取
+	gran:数据源粒度,即数据源的生成周期.必填属性,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+	level:数据源级别.必填属性,取值:CARR/CELL/BTS/BSC/MSC等
+	net-type:网络类型.必填属性,取值:GSM/CDMA/WCDMA等
+	is-log-drive:是否日志驱动，默认false
+	注:本节点设计上支持多个数据源,但目前仅支持数据库和文件形式的数据源
+	-->
+	<datasource gran="HOUR" level="CELL" net-type="CDMA" is-log-drive="false">
+		<!--数据源内容(数据库形式)
+		必填节点
+		-->
+		<database>
+			<!--数据源延时时间
+			必填节点,取值必须是整型(大于0),时间单位为分钟,建议配置120
+			-->
+			<data-delay>120</data-delay>
+			<!--描述能标识数据时间的表
+			name:时间字段名称,必填属性(必须在数据源表的字段列表中存在)
+			type:时间字段数据类型,必填属性,取值:VARCHAR2,DATE
+			table:表名,必须数据源表中的表名属性
+			-->
+			<time-field name="START_TIME" type="VARCHAR2" table="perf_cell_w_h" />
+			<!--描述多表之间的关联关系,配置SQL语句中的where子句部分
+			当存在多个数据源表时,不能为空
+			注:不需要写"where"
+			-->
+			<table-relation>
+				<![CDATA[
+					
+				]]>
+			</table-relation>
+			<!--数据源表列表
+			必填节点,无属性值
+			-->
+			<tables>
+				<!--数据源表
+				name:数据源表名/视图名/SQL结果集别名,区分大小写,必填属性,取值可以是符合XML节点属性值规范,以及数据库表名/视图名/别名的任意字符
+				connection-id:数据源表连接Id,必填属性,取值必须是整型,属性值枚举:
+					1:C网数据库连接Id
+					2:G网数据库连接Id
+					3:W网数据库连接Id
+				-->
+				<table name="perf_cell_w_h" connection-id="3">
+					<!--数据源内容(电信用)
+					可选节点,如果是SQL语句,则sql节点必填,且必须要有一个主键,table节点的name属性为别名;如果是表或视图,则去掉本节点
+					-->
+					<sql><![CDATA[]]></sql>
+					<!--数据源字段,节点数量>=1
+					必填字段,每个字段一个节点
+					字段列表中,必须必少有一个索引字段,支持联合主键(同时多个字段is-index属性值为true),不能有相同字段
+					name:字段名称,必填属性,区分大小写,取值可以是符合XML节点属性值规范,以及数据库列名的任意字符
+					is-index:是否索引字段,必填属性,取值范围:true/false,不区分大小写
+					is-export:是否要输出至告警表的字段,可选属性,默认false,取值范围:true/false,不区分大小写
+					注:CITY_ID字段是必须的
+					-->
+					<field name="NBRRELERAB" is-index="false" />
+					<field name="NBRUNNORMRELERAB" is-index="false" />
+					<field name="START_TIME" is-index="false" />
+					<field name="PERF_SUBTYPE" is-index="false" />
+					<field name="NE_CELL_ID" is-index="true" />
+					<field name="NE_BTS_ID" is-index="false" />
+					<field name="NE_BSC_ID" is-index="false" />
+					<field name="NE_MSC_ID" is-index="false" />
+					<field name="LAC" is-index="false" />
+					<field name="CI" is-index="false" />
+					<field name="OMCID" is-index="false" />
+					<field name="CELL_NAME" is-index="false" />
+					<field name="BTS_NAME" is-index="false" />
+					<field name="BSC_NAME" is-index="false" />
+					<field name="MSC_NAME" is-index="false" />
+					<field name="CITY_ID" is-index="false" is-export="true" />
+					<field name="CITY_NAME" is-index="false" />
+					<field name="ADM_AREA" is-index="false" />
+					<field name="VENDOR" is-index="false" />
+					<field name="VENDORNAME" is-index="false" />
+					<field name="NBR2GTO3GHOINSUCC" is-index="false" />
+					<field name="NBR2GTO3GHOINREQ" is-index="false" />
+					<field name="NBRCELLUPDSUCC" is-index="false" />
+					<field name="NBRCELLUPDREQ" is-index="false" />
+					<field name="CQIVAULE" is-index="false" />
+				</table>
+			</tables>
+		</database>
+		<file>
+			<!--描述能标识数据时间的表
+			name:时间字段名称,必填属性(必须在数据源表的字段列表中存在)
+			type:时间字段数据类型,必填属性,取值:VARCHAR2,DATE
+			table:表名,必须数据源表中的表名属性
+			-->
+			<time-field name="START_TIME" type="VARCHAR2" table="XXXX" />
+			<!--描述多文件之间的关联关系,配置类似SQL语句中的where子句部分
+			当存在多个数据源表时,不能为空,注:不需要写"where"
+			目前不支持，请忽略本节点
+			-->
+			<relation>
+				<![CDATA[
+					XX1.FF1=XX2.FF2
+				]]>
+			</relation>
+			<data-files>
+				<data-file name="XXXX">
+					<field name="NE_CELL_ID" is-index="true" />
+					<field name="CITY_ID" is-index="false" is-export="true" />
+					<field name="NBR2GTO3GHOINREQ" is-index="false" />
+				</data-file>
+			</data-files>
+		</file>
+	</datasource>
+	<jobs>
+		<!--任务节点
+		 relation:各任务间告警关系运算符
+		本节点可选，支持and
+		 enable:是否启用监控任务，可选属性，默认使用上层节点属性，设置时覆盖上层节点属性
+		-->
+		<job>
+			<!--告警输出方式
+			目前可用的告警输出方式有DB、Socket
+			本节点可选，默认为DB
+			-->
+			<alarm-export>DB</alarm-export>
+			<monitor-field>NE_CELL_ID</monitor-field>
+			<!--本节点可选，用于覆盖父节点属性值-->
+			<first-monitor-time>2013-06-15T09:00:00</first-monitor-time>
+			<!--本节点可选，用于覆盖父节点属性值-->
+			<last-monitor-time>2013-06-16T18:00:00</last-monitor-time>
+			<!--数据过滤器信息
+			用于过滤从本地缓存数据
+			本节点可选
+			-->
+			<filter>
+				<!--限制数据中指定的字段必须包含该节点值
+				本节点可选,也可以配置多个
+				field:要过滤的数据源字段(必须在数据源表的字段列表中存在)
+				节点值:要过滤的字段值,支持多个值同时过滤,用逗号分隔(字段值本身不能包含逗号！)
+				-->
+				<include field="NE_CELL_ID">2010100016003411</include>
+				<!--限制数据中指定的字段必须不包含该节点值
+				本节点可选,也可以配置多个
+				field:要过滤的数据源字段(必须在数据源表的字段列表中存在)
+				节点值:要过滤的字段值,支持多个值同时过滤,用逗号分隔
+				-->
+				<exclude field="NE_CELL_ID">2010100016003412</exclude>
+				<!--限制数据中指定的字段必须包含该节点值的查询结果
+				本节点可选,也可以配置多个
+				field:要过滤的数据源字段(必须在数据源表的字段列表中存在)
+				connection-id:查询语句连接Id,必填属性,取值必须是整型,属性值枚举:
+						1:C网数据库连接Id
+						2:G网数据库连接Id
+						3:W网数据库连接Id
+				节点值:要过滤的值的查询语句
+				-->
+				<includeSQL field="NE_CELL_ID" connection-id="3">
+					<![CDATA[select ne_cell_id from ne_cell_w where ne_bts_id=2016630439004400]]>
+				</includeSQL>
+				<!--限制数据中指定的字段必须不包含该节点值的查询结果
+				本节点可选,也可以配置多个
+				field:要过滤的数据源字段(必须在数据源表的字段列表中存在)
+				connection-id:查询语句连接Id,必填属性,取值必须是整型,属性值枚举:
+						1:C网数据库连接Id
+						2:G网数据库连接Id
+						3:W网数据库连接Id
+				节点值:要过滤的值的查询语句
+				-->
+				<excludeSQL field="NE_CELL_ID" connection-id="3">
+					<![CDATA[select ne_cell_id from ne_cell_w where ne_bts_id=2016630439004400]]>
+				</excludeSQL>
+			<!--自定义过滤器节点
+			本节点可选，也可以配置多个
+			field:要过滤的数据源字段(必须在数据源表的字段列表中存在)
+			value:要过滤的门限值
+			节点值:操作符,目前支持<、<=、>、>=
+			-->
+			<custom field="csend" value="22">
+				<![CDATA[>]]>
+			</custom>
+				<!--W网G网忙时
+				field:W网/G网忙时字段
+				value:字段对应值
+					G网:
+						1:小区语音忙时
+						2:小区数据忙时
+						4:全地市语音忙时
+						8:全地市数据忙时
+						16:小区资源忙时
+						32:地市资源忙时
+					W网:
+						1:语音忙时
+						2:数据忙时
+						16:室分语音忙时
+						32:室分数据忙时
+						64:bsc级语音忙时
+						128:bsc级数据忙时
+				-->
+				<busy-hour field="DATATYPE" value="1" />
+				<!--C网忙时
+				level:对应的表
+					1:ds_perf_busy_carrier_1x_d
+					2:ds_perf_busy_carrier_do_d
+					3:ds_perf_busy_cell_d
+					4:ds_perf_busy_bts_d
+					5:ds_perf_busy_bsc_d
+					6:ds_perf_busy_city_d
+					7:ds_perf_busy_province_d
+				type:对应的字段
+					1:早忙时1X
+					2:晚忙时1X
+					3:天忙时1X
+					4:早忙时DO
+					5:晚忙时DO
+					6:天忙时DO
+				-->
+				<busy-hour level="1" type="1" />
+				<!--节假日处理
+				本节点可选
+				policy属性值枚举:
+					0:任务不区分节假日
+					1:任务只在工作日运行
+					2:任务只在节假日
+				strategy属性值枚举:
+					0:监控所有数据
+					1:只监控工作日数据
+					2:只监控节假日数据
+				-->
+				<holiday policy="0" strategy="1" />
+			</filter>
+			<!--监控任务指标描述
+			必填节点
+			-->
+			<expressions>
+				<!--决定参与计算的数据源的范围集合,并且设置别名-->
+				<data-range>
+					<!--决定参与计算的数据源
+					alias:别名,必填属性,用于表达式计算
+					-->
+					<range alias="A">
+						<!--数据偏移范围
+						本节点必填,时间向前偏移,偏移单位是分钟;偏移数据截取范围为大于等于to,小于from;from值必须大于to;数据值必须是数据源粒度的整数倍
+						from:偏移起始时间,必填属性
+						to:偏移终止时间,必填属性
+						-->
+						<offset from="1440" to="1320"/>
+						<offset from="1200" to="1140"/>
+					</range>
+					<range alias="B">
+						<offset from="60" to="0"/>
+					</range>
+				</data-range>
+				<!--运算表达式内容
+				必填节点,取值:任意字符,一个表达式一个节点
+				注:运算表达式支持AS函数,在告警正文需要运算表达式结果时则使用,不需要时可不用（区分大小写，AS函数中可不带range别名，带range别名的情况下，请用小写）
+				alarm-level:告警级别,必填属性
+					1:严重
+					2:重要
+					4:普通
+					8:异常
+					16:预警
+				注:表达式内容中使用AS函数时,别名不能包含.和$符号(range的alias属性值除外)
+				-->
+				<indicator alarm-level="1"><![CDATA[as(A.S_TRAFFIC, "a.TCH可用率") >= 3 and as(B.S_TRAFFIC, "b.TCH可用率") >= 3]]></indicator>
+				<indicator alarm-level="2"><![CDATA[as(B.S_TRAFFIC, "TCH可用率") >= 4]]></indicator>
+			</expressions>
+			<!--规则部分,主要配置分析周期,監控周期,告警级别
+			必填节点
+			-->
+			<rule>
+				<!--规则信息描述
+				可选节点
+				-->
+				<description><![CDATA[在7小时中有3个小时掉话率>10%]]></description>
+				<!--分析规则描述
+				必填节点
+				本节点内容最大字节数长度:2000(UTF-8编码)
+				-->
+				<period-info>
+					<!--分析周期
+					必填节点
+					unit:分析周期单位,必填属性,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+					period-num:分析周期值,必填属性,取值:整型,大于0
+					-->
+					<analysis-period unit="WEEK" period-num="1" />
+					<!--监控周期在分析周期中的指定时间
+					必填节点
+					unit:监控周期单位,必填属性,小于等于<analysis-period>节点的unit属性值,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+					period-num:监控周期值,必填属性,取值:整型,大于0
+					assign-monitor-time:分析周期中的指定时间,可选属性,取值:字符串,用逗号分隔各值
+						<analysis-period>节点的unit属性和<monitor-period>节点unit属性所对应的取值.如:
+						1,<analysis-period>节点的unit属性值为WEEK, <monitor-period>节点unit属性为DAY,则可用取值范围为1-7
+						2,<analysis-period>节点的unit属性值为MONTH, <monitor-period>节点unit属性为DAY,则可用取值范围为1-31
+					-->
+					<monitor-period unit="DAY" period-num="1" assign-monitor-time="1,2,3">
+						<!--节点表示在监控周期中指定子粒度的指定时间,比如每天的10,12,18点
+						可选节点
+						unit:子粒度的指定时间单位,必填属性,小于等于<monitor-period>节点的unit属性值,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+						value:子粒度的指定时间值,必填属性,unit属性对应的取值,多个取值用逗号分隔
+						-->
+						<assign-time unit="HOUR" value="10,12,18"/>
+					</monitor-period>
+					<!--分析周期中出现次数,比如配置一周某个指标低于某个门限多少天
+					可选节点
+					unit:出现次数的时间单位,必填属性,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+					value:出现次数,必填属性,取值:整型,unit属性对应的取值
+					continues:是否连续,必填属性,取值:true/false
+					-->
+					<occur-times unit="HOUR" value="1" continues="true">
+						<!--监控周期中出现次数,比如配置一周某个指标低于某个门限多少天
+						可选节点
+						unit:出现次数的时间单位,必填属性,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+						value:出现次数,必填属性,取值:整型,unit属性对应的取值
+						continues:是否连续,必填属性,取值:true/false
+						-->
+						<monitor-occur-times unit="HOUR" value="1" continues="true"/>
+					</occur-times>
+				</period-info>
+				<!--TOPN规则描述
+				本节点内容最大字节数长度:2000(UTF-8编码)
+				number:TOPN取值,必填属性,取值:整型,>0
+				以下两种排序方式order-indicator和order-expression必须至少存在一种
+				-->
+				<top-info number="10">
+					<!--TOPN指标排序
+					可选节点,一个排序一个节点
+					sort-way:排序方式,必填属性,取值:asc/desc
+					节点值:要排序的indicator值（带别名，只有一个datarang时可以不要别名）
+					
+					-->
+					<order-indicator sort-way="ASC">TCH可用率</order-indicator>
+					<!--TOPN表达式排序
+					可选节点
+					sort-way:排序方式,必填属性,取值:asc/desc
+					节点值:要排序的表达式
+					-->
+					<order-expression sort-way="ASC">NBRCELLUPDREQ</order-expression>
+				</top-info>
+				<!--在分析周期内出现次数决定告警级别时 需要配置如下定义告警级别
+				可选节点
+				本节点内容最大字节数长度:2000(UTF-8编码)
+				default:当出现次数不满足<alarm>子节点配置值时,默认的告警级别
+				-->
+				<alarm-level default="2">
+					<!--告警级别
+					可选节点,至少存在一个节点
+					level:告警级别,取值:整型,>0
+						1:严重
+						2:重要
+						4:普通
+						8:异常
+						16:预警
+					occur_times:分析周期内出现的次数
+					-->
+					<alarm level="1" occur_times="7" />
+				</alarm-level>
+			</rule>
+		</job>
+		<!--
+		alarm-clear：针对结单(闭环),可添加alarm-clear节点为true标识,本节点可选,默认为false,即:非结单(闭环)
+		reject：针对驳回，可添加reject节点为true标识，本节点可选，默认为false，即：非驳回
+		-->
+		<job alarm-clear="true">
+			<!--监控频率,可选节点,如果存在,则覆盖默认的
+			unit 必填属性,取值:_1MINUTE/_5MINUTE/_10MINUTE/_15MINUTE/_30MINUTE/HOUR/DAY/WEEK/MONTH/SEASON/YEAR等,表示1分钟/5分钟/10分钟/15分钟/30分钟/小时/天/周/月/季/年
+			number :必填属性,取值:整型,大于0
+			-->
+			<monitor-period-time unit="WEEK" number="1"/>
+			<monitor-field>NE_CELL_ID</monitor-field>
+			<!--本节点可选，用于覆盖父节点属性值-->
+			<first-monitor-time>2013-06-15T09:00:00</first-monitor-time>
+			<!--本节点可选，用于覆盖父节点属性值-->
+			<last-monitor-time>2013-06-16T18:00:00</last-monitor-time>
+			<!--本节点配置规则请参见上述<filter>节点-->
+			<filter>
+				<include field="NE_CELL_ID">2010100016003411</include>
+				<exclude field="NE_CELL_ID">2010100016003412</exclude>
+				<includeSQL field="NE_CELL_ID" connection-id="3">select ne_cell_id from ne_cell_w where ne_bts_id=2016630439004400</includeSQL>
+				<excludeSQL field="NE_CELL_ID" connection-id="3">select ne_cell_id from ne_cell_w where ne_bts_id=2016630439004400</excludeSQL>
+				<busy-hour field="DATATYPE" value="1" />
+				<busy-hour level="1" type="1" />
+				<holiday policy="0" strategy="1" />
+			</filter>
+			<!--本节点配置规则请参见上述<expressions>节点-->
+			<expressions>
+				<data-range>
+					<range alias="A">
+						<offset from="1440" to="1320"/>
+						<offset from="1200" to="1140"/>
+					</range>
+					<range alias="B">
+						<offset from="60" to="0"/>
+					</range>
+				</data-range>
+				<indicator alarm-level="1"><![CDATA[as(A.S_TRAFFIC, "A.TCH可用率") >= 3 and as(B.S_TRAFFIC, "B.TCH可用率") >= 3]]></indicator>
+				<indicator alarm-level="2"><![CDATA[as(B.S_TRAFFIC, "B.TCH可用率") >= 4]]></indicator>
+			</expressions>
+			<!--本节点配置规则请参见上述<rule>节点-->
+			<rule>
+				<description><![CDATA[在7小时中有3个小时掉话率>10%]]></description>
+				<period-info>
+					<analysis-period unit="WEEK" period-num="1" />
+					<monitor-period unit="DAY" period-num="1" assign-monitor-time="1,2,3">
+						<assign-time unit="HOUR" value="10,12,18"/>
+					</monitor-period>
+					<occur-times unit="HOUR" value="1" continues="true" />
+				</period-info>
+				<top-info number="10" sort-way="DESC">
+					<expression>NBRCELLUPDREQ</expression>
+				</top-info>
+				<alarm-level default="2">
+					<alarm level="1" occur_times="7" />
+					<alarm level="2" occur_times="5,6" />
+				</alarm-level>
+			</rule>
+		</job>
+	</jobs>
+</monit-task>
